@@ -1,8 +1,9 @@
 package database
 
 import (
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 func ConnectDB() *gorm.DB {
@@ -10,11 +11,12 @@ func ConnectDB() *gorm.DB {
 	PASS := ""
 	HOST := "localhost"
 	PORT := "3306"
-	DBNAME := "go_module"
+	DBNAME := "golang"
 	URL := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", USER, PASS, HOST, PORT, DBNAME)
 	db, err := gorm.Open("mysql", URL)
 	if err != nil {
 		panic(err.Error())
-	}
+	} 
+	fmt.Println("--------------: Connect success")
 	return db
 }
