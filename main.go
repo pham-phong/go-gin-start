@@ -1,13 +1,16 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"modules/database"
+	"modules/models"
+	"modules/routes"
+)
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	db := database.ConnectDB()
+	db.AutoMigrate(&models.User{})
+
+	api.CreateApiUrl(db)
+	// Listen and server on 0.0.0.0:8080
+	api.Router.Run(":8080")
 }
