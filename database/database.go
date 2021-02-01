@@ -17,6 +17,5 @@ func ConnectDB() *gorm.DB {
 	if err != nil {
 		panic(err.Error())
 	} 
-	fmt.Println("--------------: Connect success")
 	return db
 }
