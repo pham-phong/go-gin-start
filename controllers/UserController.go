@@ -10,14 +10,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetUser(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "ping",
-	})
-}
-
 func Hash(password string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+}
+
+func GetUser(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	users := []models.User{}
+
+	if err := db.Find(&users).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }
 
 func SaveUser(c *gin.Context) {
