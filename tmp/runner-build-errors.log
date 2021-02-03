@@ -1,1 +1,2 @@
-routes\api.go:6:2: found packages controllers (Authentication.go) and UserController (UserController.go) in D:\DEV\GoLang\GoCode\ginstarted\controllers
+# modules
+.\main.go:15:2: undefined: api.Router
