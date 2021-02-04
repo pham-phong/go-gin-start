@@ -14,6 +14,12 @@ func Hash(password string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 }
 
+func ShowUser(c *gin.Context) {
+	// c.Request.Header.Get()
+	log.Println("-------------", c.Request)
+	log.Println("++++++++++", c.Request.Header.Get("Authorization"))
+}
+
 func GetUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	users := []models.User{}

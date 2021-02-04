@@ -43,6 +43,7 @@ func CreateApiUrl(r *gin.Engine) *gin.Engine {
 	auth := r.Group("/api/auth")
 	auth.Use(middleware.AuthorizeJWT())
 	{
+		auth.GET("/user", controllers.ShowUser)
 		auth.GET("/users", controllers.GetUser)
 		auth.POST("/user", controllers.SaveUser)
 		auth.GET("/user/:id", controllers.FindUser)

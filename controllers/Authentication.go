@@ -47,7 +47,7 @@ func Login(c *gin.Context) {
 	}
 
 	tokens := map[string]string{
-		"access_token":  ts.AccessToken,
+		"token":  ts.AccessToken,
 		"refresh_token": ts.RefreshToken,
 	}
 	c.JSON(http.StatusOK, tokens)

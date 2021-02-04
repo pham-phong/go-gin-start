@@ -8,11 +8,7 @@ import (
 
 func main() {
 	db := database.ConnectDB()
-	db.AutoMigrate(&models.User{})
-
-	// r := routes.CreateApiUrl(db)
-	// // Listen and server on 0.0.0.0:8080
-	// r.Run(":8080")
+	db.AutoMigrate(&models.User{}, &models.ShortUrl{})
 
 	r := routes.SetupRoute(db)
 
