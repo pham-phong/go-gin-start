@@ -10,23 +10,22 @@ import (
 )
 
 type UrlCreatRequest struct {
-	Code string `json:"code"`
 	Link string `json:"link"`
 }
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789")
 
-func randURL(n int, c *gin.Context) string {
+func randString(n int, c *gin.Context) string {
 	db := c.MustGet("db").(*gorm.DB)
 
 	b := make([]rune, n)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
 	}
-	// check randURL in database
+	// check in database
 	var short_link models.ShortUrl
 	if err := db.Where("code = ?", b).First(&short_link).Error; err == nil {
-		randURL(n, c)
+		randString(n, c)
 	}
 	return string(b)
 }
@@ -39,24 +38,27 @@ func CreateShortLink(c *gin.Context) {
 		return
 	}
 	// random URL
-	CodeRand := randURL(10, c)
+	rand_url := randString(10, c)
 	// Create user
-	short_link := models.ShortUrl{Code: CodeRand, Link: input.Link}
+	short_link := models.ShortUrl{Code: rand_url, Link: input.Link}
 
 	db := c.MustGet("db").(*gorm.DB)
-	db.Create(&short_link)
-	c.JSON(http.StatusOK, gin.H{"data": short_link})
+	result := db.Create(&short_link)
+
+	c.JSON(http.StatusOK, result.Value)
 }
 
 func HandleShortUrlRedirect(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
-	var short_link models.ShortUrl
+
+	var result models.ShortUrl
 
 	code := c.Request.URL.Path[len("/"):]
 
-	if err := db.Where("code = ?", code).First(&short_link).Error; err != nil {
+	if err := db.Where("code = ?", code).First(&result).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.Redirect(302, short_link.Link)
+
+	c.Redirect(302, result.Link)
 }

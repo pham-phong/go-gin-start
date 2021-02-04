@@ -1,5 +1,2 @@
 # modules/controllers
-controllers\ShortLinkController.go:24:17: undefined: models.ShortLink
-controllers\ShortLinkController.go:42:16: undefined: models.ShortLink
-controllers\ShortLinkController.go:49:17: undefined: models.ShortLink
-controllers\ShortLinkController.go:63:19: undefined: models.ShortLink
+controllers\ShortLinkController.go:4:2: imported and not used: "fmt"

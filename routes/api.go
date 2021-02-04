@@ -40,6 +40,9 @@ import (
 func CreateApiUrl(r *gin.Engine) *gin.Engine {
 	r.POST("/api/login", controllers.Login)
 
+	r.POST("/create-shortlink", controllers.CreateShortLink)
+	r.NoRoute(controllers.HandleShortUrlRedirect)
+
 	auth := r.Group("/api/auth")
 	auth.Use(middleware.AuthorizeJWT())
 	{
@@ -49,6 +52,8 @@ func CreateApiUrl(r *gin.Engine) *gin.Engine {
 		auth.GET("/user/:id", controllers.FindUser)
 		auth.PUT("/user/:id", controllers.UpdateUser)
 		auth.DELETE("/logout", controllers.Logout)
+
+		// auth.POST("/create-shortlink", controllers.CreateShortLink)
 	}
 	return r
 }
