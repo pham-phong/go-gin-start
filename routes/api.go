@@ -40,14 +40,14 @@ import (
 func CreateApiUrl(r *gin.Engine) *gin.Engine {
 	r.POST("/api/login", controllers.Login)
 
-	auth := r.Group("/api")
+	auth := r.Group("/api/auth")
 	auth.Use(middleware.AuthorizeJWT())
 	{
-		r.GET("/users", controllers.GetUser)
-		r.POST("/user", controllers.SaveUser)
-		r.GET("/user/:id", controllers.FindUser)
-		r.PUT("/user/:id", controllers.UpdateUser)
-		r.DELETE("/logout", controllers.Logout)
+		auth.GET("/users", controllers.GetUser)
+		auth.POST("/user", controllers.SaveUser)
+		auth.GET("/user/:id", controllers.FindUser)
+		auth.PUT("/user/:id", controllers.UpdateUser)
+		auth.DELETE("/logout", controllers.Logout)
 	}
 	return r
 }
