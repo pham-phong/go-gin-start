@@ -44,7 +44,7 @@ type AccessDetails struct {
 	UserId     uint64
 }
 
-func CreateToken(userid uint64) (*TokenDetails, error) {
+func CreateToken(user_id uint64) (*TokenDetails, error) {
 	td := &TokenDetails{}
 	td.AtExpires = time.Now().Add(time.Minute * 15).Unix()
 	td.AccessUuid = uuid.NewV4().String()
@@ -58,7 +58,7 @@ func CreateToken(userid uint64) (*TokenDetails, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUuid
-	atClaims["user_id"] = userid
+	atClaims["user_id"] = user_id
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -69,7 +69,7 @@ func CreateToken(userid uint64) (*TokenDetails, error) {
 	os.Setenv("REFRESH_SECRET", "mcmvmkmsdnfsdmfdsjf") //this should be in an env file
 	rtClaims := jwt.MapClaims{}
 	rtClaims["refresh_uuid"] = td.RefreshUuid
-	rtClaims["user_id"] = userid
+	rtClaims["user_id"] = user_id
 	rtClaims["exp"] = td.RtExpires
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtClaims)
 	td.RefreshToken, err = rt.SignedString([]byte(os.Getenv("REFRESH_SECRET")))
@@ -78,16 +78,16 @@ func CreateToken(userid uint64) (*TokenDetails, error) {
 	}
 	return td, nil
 }
-func CreateAuth(userid uint64, td *TokenDetails) error {
+func CreateAuth(user_id uint64, td *TokenDetails) error {
 	at := time.Unix(td.AtExpires, 0) //converting Unix to UTC(to Time object)
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	errAccess := client.Set(td.AccessUuid, strconv.Itoa(int(userid)), at.Sub(now)).Err()
+	errAccess := client.Set(td.AccessUuid, strconv.Itoa(int(user_id)), at.Sub(now)).Err()
 	if errAccess != nil {
 		return errAccess
 	}
-	errRefresh := client.Set(td.RefreshUuid, strconv.Itoa(int(userid)), rt.Sub(now)).Err()
+	errRefresh := client.Set(td.RefreshUuid, strconv.Itoa(int(user_id)), rt.Sub(now)).Err()
 	if errRefresh != nil {
 		return errRefresh
 	}
@@ -154,11 +154,11 @@ func ExtractTokenMetadata(r *http.Request) (*AccessDetails, error) {
 }
 
 func FetchAuth(authD *AccessDetails) (uint64, error) {
-	userid, err := client.Get(authD.AccessUuid).Result()
+	user_id, err := client.Get(authD.AccessUuid).Result()
 	if err != nil {
 		return 0, err
 	}
-	userID, _ := strconv.ParseUint(userid, 10, 64)
+	userID, _ := strconv.ParseUint(user_id, 10, 64)
 	return userID, nil
 }
 

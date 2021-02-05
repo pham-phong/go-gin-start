@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"log"
+	"modules/auth"
 	"modules/models"
 	"net/http"
 
@@ -16,8 +17,21 @@ func Hash(password string) ([]byte, error) {
 
 func ShowUser(c *gin.Context) {
 	// c.Request.Header.Get()
-	log.Println("-------------", c.Request)
-	log.Println("++++++++++", c.Request.Header.Get("Authorization"))
+	tokenAuth, err := auth.ExtractTokenMetadata(c.Request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	db := c.MustGet("db").(*gorm.DB)
+
+	// Get model if exist
+	var user models.User
+	if err := db.Where("id = ?", tokenAuth.UserId).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 func GetUser(c *gin.Context) {
