@@ -39,7 +39,9 @@ import (
 
 func CreateApiUrl(r *gin.Engine) *gin.Engine {
 	r.POST("/api/login", controllers.Login)
+	r.POST("/api/register", controllers.Register)
 
+	r.GET("api/get-shortlink", controllers.GetShortlinks)
 	r.POST("/create-shortlink", controllers.CreateShortLink)
 	r.NoRoute(controllers.HandleShortUrlRedirect)
 

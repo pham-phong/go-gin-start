@@ -13,6 +13,28 @@ type UserLogin struct {
 	Password string `json:"password" binding:"required"`
 }
 
+func Register(c *gin.Context) {
+	var req models.User
+
+	// Validate input
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	//Create user
+	user := models.User{Username: req.Username, Email: req.Email, Password: req.Password}
+
+	db := c.MustGet("db").(*gorm.DB)
+	result := db.Create(&user)
+
+	// if err := db.Create(&user).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 	return
+	// }
+	c.JSON(http.StatusOK, result.Value)
+}
+
 func Login(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var user models.User
@@ -47,8 +69,9 @@ func Login(c *gin.Context) {
 	}
 
 	tokens := map[string]string{
-		"token":  ts.AccessToken,
+		"token":         ts.AccessToken,
 		"refresh_token": ts.RefreshToken,
+		// "type":          "Bearer",
 	}
 	c.JSON(http.StatusOK, tokens)
 }

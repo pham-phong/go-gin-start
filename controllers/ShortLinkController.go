@@ -48,17 +48,33 @@ func CreateShortLink(c *gin.Context) {
 	c.JSON(http.StatusOK, result.Value)
 }
 
+func GetShortlinks(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	links := []models.ShortUrl{}
+
+	if err := db.Find(&links).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		return
+	}
+
+	c.JSON(http.StatusOK, links)
+}
+
 func HandleShortUrlRedirect(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
 	var result models.ShortUrl
 
-	code := c.Request.URL.Path[len("/"):]
+	code := c.Request.URL.Path[len("/api/"):]
 
 	if err := db.Where("code = ?", code).First(&result).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
 
-	c.Redirect(302, result.Link)
+	var click int = int(result.Click) + 1
+	db.Model(&result).Update("click", click)
+
+	c.JSON(http.StatusOK, result.Link)
+	// c.Redirect(302, result.Link)
 }
