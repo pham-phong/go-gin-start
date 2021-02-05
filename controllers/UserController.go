@@ -31,7 +31,7 @@ func ShowUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 func GetUser(c *gin.Context) {
