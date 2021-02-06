@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
@@ -42,7 +43,6 @@ func ShowUser(c *gin.Context) {
 func GetUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	users := []models.User{}
-
 	if err := db.Find(&users).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
