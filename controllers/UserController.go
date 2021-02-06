@@ -66,9 +66,14 @@ func SaveUser(c *gin.Context) {
 	user := models.User{Username: req.Username, Email: req.Email, Password: req.Password}
 
 	db := c.MustGet("db").(*gorm.DB)
-	result := db.Create(&user)
 
-	c.JSON(http.StatusOK, result)
+	if result := db.Create(&user); result.Error != nil {
+		c.JSON(422, result.Error)
+		return
+	} else {
+		c.JSON(http.StatusOK, result.Value)
+	}
+
 }
 
 /**

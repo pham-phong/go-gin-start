@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"modules/auth"
 	"modules/models"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 type UserLogin struct {
@@ -30,13 +31,13 @@ func Register(c *gin.Context) {
 	user := models.User{Username: req.Username, Email: req.Email, Password: req.Password}
 
 	db := c.MustGet("db").(*gorm.DB)
-	result := db.Create(&user)
 
-	// if err := db.Create(&user).Error; err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	c.JSON(http.StatusOK, result.Value)
+	if result := db.Create(&user); result.Error != nil {
+		c.JSON(422, result.Error)
+		return
+	} else {
+		c.JSON(http.StatusOK, result.Value)
+	}
 }
 
 func Login(c *gin.Context) {
