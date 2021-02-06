@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"modules/auth"
 	"modules/models"
 	"net/http"
@@ -11,8 +10,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Hash(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 func ShowUser(c *gin.Context) {
@@ -48,13 +53,14 @@ func GetUser(c *gin.Context) {
 
 func SaveUser(c *gin.Context) {
 	var req models.User
-	log.Println("----------------------------", req)
-
 	// Validate input
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	//hash password
+	hashedPassword, _ := HashPassword(req.Password)
+	req.Password = string(hashedPassword)
 
 	//Create user
 	user := models.User{Username: req.Username, Email: req.Email, Password: req.Password}

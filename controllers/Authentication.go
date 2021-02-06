@@ -22,6 +22,10 @@ func Register(c *gin.Context) {
 		return
 	}
 
+	//hash password
+	hashedPassword, _ := HashPassword(req.Password)
+	req.Password = string(hashedPassword)
+
 	//Create user
 	user := models.User{Username: req.Username, Email: req.Email, Password: req.Password}
 
@@ -46,13 +50,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if err := db.Where("email = ? AND password = ?", req.Email, req.Password).First(&user).Error; err != nil {
+	if err := db.Where("email = ?", req.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
+	checkPasswordHash := CheckPasswordHash(req.Password, user.Password)
 
 	//compare the user from the request, with the one we defined:
-	if user.Email != req.Email || user.Password != req.Password {
+	if user.Email != req.Email || !checkPasswordHash {
 		c.JSON(http.StatusUnauthorized, "Please provide valid login details")
 		return
 	}
