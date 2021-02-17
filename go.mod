@@ -16,11 +16,12 @@ require (
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-shellwords v1.0.11 // indirect
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
+	github.com/morkid/paginate v1.0.11
 	github.com/pilu/config v0.0.0-20131214182432-3eb99e6c0b9a // indirect
 	github.com/pilu/fresh v0.0.0-20190826141211-0fa698148017 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/twinj/uuid v1.0.0
-	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 	gorm.io/driver/sqlite v1.1.4 // indirect
