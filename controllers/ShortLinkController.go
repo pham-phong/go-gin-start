@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"math/rand"
+	"modules/database"
 	"modules/models"
 	"net/http"
 
@@ -58,6 +59,14 @@ func GetShortlinks(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, links)
+}
+
+func Pagination(c *gin.Context, db *gorm.DB) *gorm.DB {
+	links := []models.ShortUrl{}
+
+	db.Scopes(database.Paginate(c)).Find(&links)
+
+	return db.Scopes(database.Paginate(c)).Find(&links)
 }
 
 func HandleShortUrlRedirect(c *gin.Context) {
