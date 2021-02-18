@@ -61,12 +61,18 @@ func GetShortlinks(c *gin.Context) {
 	c.JSON(http.StatusOK, links)
 }
 
-func Pagination(c *gin.Context, db *gorm.DB) *gorm.DB {
+func Pagination(c *gin.Context) {
+	// db := c.MustGet("db").(*gorm.DB)
 	links := []models.ShortUrl{}
 
-	db.Scopes(database.Paginate(c)).Find(&links)
+	// if err := db.Scopes(database.Paginate(c)).Find(&links).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+	// 	return
+	// }
 
-	return db.Scopes(database.Paginate(c)).Find(&links)
+	paginator := database.Paginate(c, &links)
+
+	c.JSON(http.StatusOK, paginator)
 }
 
 func HandleShortUrlRedirect(c *gin.Context) {

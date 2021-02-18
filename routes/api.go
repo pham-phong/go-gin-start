@@ -44,8 +44,9 @@ func CreateApiUrl(r *gin.Engine) *gin.Engine {
 	r.GET("api/get-shortlink", controllers.GetShortlinks)
 	r.POST("/create-shortlink", controllers.CreateShortLink)
 	r.NoRoute(controllers.HandleShortUrlRedirect)
-	// r.GET("api/get-pagination", controllers.Pagination)
 	
+	r.GET("api/get-pagination", controllers.Pagination)
+
 	auth := r.Group("/api/auth")
 	auth.Use(middleware.AuthorizeJWT())
 	{
