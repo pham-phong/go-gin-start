@@ -14,6 +14,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/howeyc/fsnotify v0.9.0 // indirect
 	github.com/jinzhu/gorm v1.9.16
+	github.com/joho/godotenv v1.3.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-shellwords v1.0.11 // indirect
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect

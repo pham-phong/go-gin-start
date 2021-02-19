@@ -9,19 +9,21 @@ import (
 )
 
 type Paginator struct {
-	// TotalPage   int         `json:"total_page"`
-	Total        int         `json:"total"`
-	Data         interface{} `json:"data"`
-	Current_page int         `json:"current_page"`
-	Last_page    int         `json:"last_page"`
-	Next         int         `json:"next"`
-	Prev         int         `json:"prev"`
-	Links        struct {
+	Data interface{} `json:"data"`
+	// Total        int         `json:"total"`
+	// Current_page int         `json:"current_page"`
+	// Last_page    int         `json:"last_page"`
+	// Next         int         `json:"next"`
+	// Prev         int         `json:"prev"`
+	Links struct {
 		Next int `json:"next"`
 		Prev int `json:"prev"`
-	} `json:"link"`
-	// PrevPage    int         `json:"prev_page"`
-	// NextPage    int         `json:"next_page"`
+	} `json:"links"`
+	Meta struct {
+		Total        int `json:"total"`
+		Current_page int `json:"current_page"`
+		Last_page    int `json:"last_page"`
+	} `json:"meta"`
 }
 
 func Paginate(c *gin.Context, result interface{}) *Paginator {
@@ -31,14 +33,14 @@ func Paginate(c *gin.Context, result interface{}) *Paginator {
 
 	//Count all Record
 	db.Model(result).Count(&total)
+
 	//Get page
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-
 	if page < 1 {
 		page = 1
 	}
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	switch {
 	case limit > 100:
 		limit = 100
@@ -50,23 +52,21 @@ func Paginate(c *gin.Context, result interface{}) *Paginator {
 	data := db.Offset(offset).Limit(limit).Find(result)
 
 	paginator.Data = data.Value
-	paginator.Total = total
-	paginator.Current_page = page
-	paginator.Last_page = int(math.Ceil(float64(total) / float64(limit)))
+	paginator.Meta.Total = total
+	paginator.Meta.Current_page = page
+	paginator.Meta.Last_page = int(math.Ceil(float64(total) / float64(limit)))
 
-	if paginator.Current_page > 1 {
-		paginator.Prev = paginator.Current_page - 1
+	if paginator.Meta.Current_page > 1 {
+		paginator.Links.Prev = paginator.Meta.Current_page - 1
 	} else {
-		paginator.Prev = paginator.Current_page
+		paginator.Links.Prev = paginator.Meta.Current_page
 	}
 
-	if paginator.Current_page == paginator.Total {
-		paginator.Next = paginator.Current_page
+	if paginator.Meta.Current_page == paginator.Meta.Last_page {
+		paginator.Links.Next = paginator.Meta.Current_page
 	} else {
-		paginator.Next = paginator.Current_page + 1
+		paginator.Links.Next = paginator.Meta.Current_page + 1
 	}
-	paginator.Links.Next = paginator.Next
-	paginator.Links.Prev = paginator.Prev
 
 	return &paginator
 }

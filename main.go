@@ -1,10 +1,20 @@
 package main
 
 import (
+	"log"
 	"modules/database"
 	"modules/models"
 	"modules/routes"
+
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
 
 func main() {
 	db := database.ConnectDB()
