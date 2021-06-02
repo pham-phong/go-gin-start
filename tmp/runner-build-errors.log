@@ -1,4 +1,2 @@
-go: errors parsing go.mod:
-D:\DEV\GoLang\GoCode\ginstarted\go.mod:5: unknown directive: <<<<<<<
-D:\DEV\GoLang\GoCode\ginstarted\go.mod:25: unknown directive: =======
-D:\DEV\GoLang\GoCode\ginstarted\go.mod:27: unknown directive: >>>>>>>
+# modules/models
+models\Pagination.go:10:34: syntax error: unexpected ., expecting comma or )
